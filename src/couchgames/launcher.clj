@@ -15,9 +15,16 @@
     (.setContentPane component)
     (.setVisible true)))
 
+(defn new-panel [color]
+  (doto (JPanel.)
+    (.setBackground color)))
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (show-in-window (doto (JPanel.)
-                    (.setBackground Color/RED)))
-)
+  (let [content (JPanel.)
+        layout (TwoColumns/create content)]
+    (.setLayout content layout)
+    (.add content (new-panel (Color. 180 255 255)) "head")
+    (.add content (new-panel (Color. 200 255 255)) "body")
+    (show-in-window content)))
