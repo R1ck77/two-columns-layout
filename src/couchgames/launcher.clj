@@ -1,5 +1,5 @@
 (ns couchgames.launcher
-  (:require [couchgames.layout])
+  (:require [couchgames.layout :as layout])
   (:import [couchgames.layout TwoColumns]
            [java.awt Dimension Color]
            [javax.swing JFrame JPanel]
@@ -23,8 +23,10 @@
   "I don't do a whole lot ... yet."
   [& args]
   (let [content (JPanel.)
-        layout (TwoColumns/create content)]
+        layout (layout/create content
+                              (new-panel (Color. 180 255 255)) (new-panel (Color. 200 255 255))
+                              (new-panel (Color. 255 180 255)) (new-panel (Color. 255 200 255)))]
     (.setLayout content layout)
-    (.add content (new-panel (Color. 180 255 255)) "head")
-    (.add content (new-panel (Color. 200 255 255)) "body")
+;;;    (.add content (new-panel (Color. 180 255 255)) "head")
+;;;    (.add content (new-panel (Color. 200 255 255)) "body")
     (show-in-window content)))
