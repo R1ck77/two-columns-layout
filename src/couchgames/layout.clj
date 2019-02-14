@@ -11,23 +11,15 @@
 (def right-body-key "right-body")
 
 (defn- layout-container
-  [^Container parent components]
+  [^Container parent inner-panel components left right]
   (println "Laying out…" components)  
   (let [by-name (into {} (map vec (map reverse components)))
         parent-width (.getWidth parent)
         parent-height (.getHeight parent)]
-    (doto (get by-name left-head-key)
-      (.setBounds (Rectangle. 0 0
-                              (/ parent-width 2) (/ parent-height 2))))
-    (doto (get by-name left-body-key)
-      (.setBounds (Rectangle. 0 (/ parent-height 2)
-                              (/ parent-width 2) (/ parent-height 2))))
-    (doto (get by-name right-head-key)
-      (.setBounds (Rectangle. (/ parent-width 2) 0
-                              (/ parent-width 2) (/ parent-height 2))))
-    (doto (get by-name right-body-key)
-      (.setBounds (Rectangle. (/ parent-width 2) (/ parent-height 2)
-                              (/ parent-width 2) (/ parent-height 2))))    ))
+    (doto inner-panel
+      (.setBounds (Rectangle. 0 0 parent-width parent-height)))
+    (.setSize (get by-name left-head-key) (.getSize left))
+    (.setSize (get by-name right-head-key) (.getSize right))))
 
 (defn- preferred-layout-size [components]
   (Dimension. 50 50))
@@ -35,29 +27,33 @@
 (defn- minimum-layout-size [components]
   (Dimension. 0 0)) ;;; arbitrary, for now
 
-(defn- create-split-pane [left right]
-  (doto (JSplitPane. JSplitPane/VERTICAL_SPLIT left right)
-    
-    ))
-
 (defn- add-layout-component
-  [components-atom name component]
+  [components name component]
   (println "add layout component not implemented yet"))
 
 (defn- create-transparent-panel []
   (doto (JPanel.)
     (.setOpaque false)))
 
+(defn- create-split-pane [left right]
+  (doto (JSplitPane. JSplitPane/HORIZONTAL_SPLIT left right)
+    
+    ))
+
 ;;; Pass all compontents immediately, for now, then You'll have to re-create the splitpane
 (defn create [^Container parent tmp-left-head tmp-left-body tmp-right-head tmp-right-body]
   (let [components (hash-map tmp-left-head left-head-key
                              tmp-left-body left-body-key
                              tmp-right-head right-head-key
-                             tmp-right-body right-body-key)]
-    (.add parent tmp-left-head)
-    (.add parent tmp-left-body)
-    (.add parent tmp-right-head)
-    (.add parent tmp-right-body)
+                             tmp-right-body right-body-key)
+        left-panel (doto (JPanel. nil)
+                    (.add tmp-left-head)
+                    (.add tmp-left-body))
+        right-panel (doto (JPanel. nil)
+                    (.add tmp-right-head)
+                    (.add tmp-right-body))
+        inner-panel (create-split-pane left-panel right-panel)]
+    (.add parent inner-panel)
     (reify LayoutManager
       (addLayoutComponent [this name component]
         (add-layout-component components name component))
@@ -68,7 +64,7 @@
       (removeLayoutComponent [this comp]
         (swap! components #(dissoc % comp)))
       (layoutContainer [this parent]
-        (layout-container parent components)))))
+        (layout-container parent inner-panel components left-panel right-panel)))))
 
 (defn -create [^Component parent]
   (create parent nil nil nil nil))
