@@ -1,44 +1,17 @@
-# layout
+# Two columns layout
 
-FIXME: description
+A small test to implement a custom layout that allows the alignment of two headers across a JSplitPane.
 
-## Installation
-
-Download from http://example.com/FIXME.
-
-## Usage
-
-FIXME: explanation
-
-    $ java -jar layout-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+This is mostly a test, for study and self improvement, also it's written in Clojure, because "why not?".
 
 ## License
 
-Copyright © 2019 FIXME
+Seriously? Whatever… be my guest:
 
-This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
+Copyright © 2019 Riccardo Di Meo
 
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
+This program is free software. It comes without any warranty, to the
+extent permitted by applicable law. You can redistribute it and/or
+modify it under the terms of the Do What The F--- You Want To Public
+License, Version 2, as published by Sam Hocevar. See
+http://www.wtfpl.net/ for more details.
