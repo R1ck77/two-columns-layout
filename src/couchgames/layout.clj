@@ -43,7 +43,9 @@
     (.setOpaque false)))
 
 (defn- create-split-pane [container left right components]
-  (let [split-pane (JSplitPane. JSplitPane/HORIZONTAL_SPLIT left right)
+  (let [split-pane (doto (JSplitPane. JSplitPane/HORIZONTAL_SPLIT left right)
+                     (.setDividerSize 1)
+                     (.setResizeWeight 0.5))
         listener (reify PropertyChangeListener
                    (propertyChange [this event]
                      (layout-container container
