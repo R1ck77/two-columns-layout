@@ -11,16 +11,22 @@
 (def right-head-key "right-head")
 (def right-body-key "right-body")
 
+(defn- size-components [container ^Component top ^Component bottom]
+  (let [outer-size (.getSize container)
+        outer-height (.getHeight outer-size)
+        top-height (min outer-height (.getHeight (.getPreferredSize top)))]
+    (.setBounds top 0 0 (.getWidth outer-size) top-height)
+    (.setBounds bottom 0 top-height (.getWidth outer-size) (- outer-height top-height))))
+
 (defn- layout-container
   [^Container parent inner-panel components left right]
   (println "Laying out…" components)  
   (let [by-name (into {} (map vec (map reverse components)))
         parent-width (.getWidth parent)
         parent-height (.getHeight parent)]
-    (doto inner-panel
-      (.setBounds (Rectangle. 0 0 parent-width parent-height)))
-    (.setSize (get by-name left-head-key) (.getSize left))
-    (.setSize (get by-name right-head-key) (.getSize right))))
+    (.setBounds inner-panel (Rectangle. 0 0 parent-width parent-height))
+    (size-components left (get by-name left-head-key) (get by-name left-body-key))
+    (size-components right (get by-name right-head-key) (get by-name right-body-key))))
 
 (defn- preferred-layout-size [components]
   (Dimension. 50 50))
