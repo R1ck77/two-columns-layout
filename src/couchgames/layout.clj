@@ -1,6 +1,7 @@
 (ns couchgames.layout
   (:import [java.awt LayoutManager Component Container Dimension Rectangle]
-           [javax.swing JPanel JSplitPane])
+           [javax.swing JPanel JSplitPane]
+           [java.beans PropertyChangeEvent PropertyChangeListener])
   (:gen-class
    :name couchgames.layout.TwoColumns
    :methods [^:static [create [java.awt.Container] java.awt.LayoutManager]]))
@@ -35,10 +36,15 @@
   (doto (JPanel.)
     (.setOpaque false)))
 
-(defn- create-split-pane [left right]
-  (doto (JSplitPane. JSplitPane/HORIZONTAL_SPLIT left right)
-    
-    ))
+(defn- create-split-pane [container left right components]
+  (let [split-pane (JSplitPane. JSplitPane/HORIZONTAL_SPLIT left right)
+        listener (reify PropertyChangeListener
+                   (propertyChange [this event]
+                     (layout-container container
+                                       split-pane
+                                       components left right)))]
+    (.addPropertyChangeListener split-pane listener)
+    split-pane))
 
 ;;; Pass all compontents immediately, for now, then You'll have to re-create the splitpane
 (defn create [^Container parent tmp-left-head tmp-left-body tmp-right-head tmp-right-body]
@@ -52,7 +58,7 @@
         right-panel (doto (JPanel. nil)
                     (.add tmp-right-head)
                     (.add tmp-right-body))
-        inner-panel (create-split-pane left-panel right-panel)]
+        inner-panel (create-split-pane parent left-panel right-panel components)]
     (.add parent inner-panel)
     (reify LayoutManager
       (addLayoutComponent [this name component]
