@@ -14,19 +14,19 @@
 (def right-body-key "right-body")
 
 ;;; TODO not optimal. Just pass the Size at this point :p
-(defn size-to-vector [size]
-  (vec ((juxt #(.getWidth %)
-              #(.getHeight %)) size)))
+(defn dimension-to-vector [dimension]
+  (vec ((juxt (memfn getWidth)
+              (memfn getHeight)) dimension)))
 
 (defn get-size [component]
-  (size-to-vector (.getSize component)))
+  (dimension-to-vector (.getSize component)))
 
 (defn get-preferred-size [component]
-  (size-to-vector (.getPreferredSize component)))
+  (dimension-to-vector (.getPreferredSize component)))
 
 (defn rectangle-to-vector [rectangle]
-  (vec ((juxt #(.getX %) #(.getY %)
-              #(.getWidth %) #(.getHeight %)) rectangle)))
+  (vec ((juxt (memfn getX) (memfn getY)
+              (memfn getWidth) (memfn getHeight)) rectangle)))
 
 (defn get-bounds [component]
   (rectangle-to-vector (.getBounds component)))
