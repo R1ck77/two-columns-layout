@@ -6,6 +6,8 @@
    :name couchgames.layout.TwoColumns
    :methods [^:static [create [java.awt.Container] java.awt.LayoutManager]]))
 
+(def split-pane-divider-size 3)
+
 (def left-head-key "left-head")
 (def left-body-key "left-body")
 (def right-head-key "right-head")
@@ -22,10 +24,12 @@
 (defn get-preferred-size [component]
   (size-to-vector (.getPreferredSize component)))
 
+(defn rectangle-to-vector [rectangle]
+  (vec ((juxt #(.getX %) #(.getY %)
+              #(.getWidth %) #(.getHeight %)) rectangle)))
 
 (defn get-bounds [component]
-  (vec ((juxt #(.getX %) #(.getY %)
-              #(.getWidth %) #(.getHeight %)) (.getBounds component))))
+  (rectangle-to-vector (.getBounds component)))
 
 (defn- size-components [container]
   (let [[outer-width outer-height] (get-size (:panel container))
@@ -58,7 +62,7 @@
 
 (defn- create-split-pane [container left right]
   (let [split-pane (doto (JSplitPane. JSplitPane/HORIZONTAL_SPLIT (:panel left) (:panel right))
-                     (.setDividerSize 1)
+                     (.setDividerSize split-pane-divider-size)
                      (.setResizeWeight 0.5))
         listener (reify PropertyChangeListener
                    (propertyChange [this event]
