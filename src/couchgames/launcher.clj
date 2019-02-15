@@ -2,8 +2,7 @@
   (:require [couchgames.layout :as layout])
   (:import [couchgames.layout TwoColumns]
            [java.awt Dimension Color]
-           [javax.swing JFrame JPanel JTextArea]
-           )
+           [javax.swing JFrame JPanel JTextArea])
   (:gen-class))
 
 (def window-width 800)
@@ -11,6 +10,7 @@
 
 (defn show-in-window [component]
   (doto (JFrame.)
+    (.setDefaultCloseOperation JFrame/DISPOSE_ON_CLOSE)
     (.setSize (Dimension. window-width window-height))
     (.setContentPane component)
     (.setVisible true)))
