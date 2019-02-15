@@ -11,12 +11,19 @@
 (def right-head-key "right-head")
 (def right-body-key "right-body")
 
+(defn get-size [component]
+  (vec ((juxt #(.getWidth %)
+          #(.getHeight %)) (.getSize component))))
+
+(defn get-bounds [component]
+  (vec ((juxt #(.getX %) #(.getY %)
+              #(.getWidth %) #(.getHeight %)) (.getBounds component))))
+
 (defn- size-components [container]
-  (let [outer-size (.getSize (:panel container))
-        outer-height (.getHeight outer-size)
+  (let [[outer-width outer-height] (get-size (:panel container))
         top-height (min outer-height (.getHeight (.getPreferredSize (:head container))))]
-    (.setBounds (:head container) 0 0 (.getWidth outer-size) top-height)
-    (.setBounds (:body container) 0 top-height (.getWidth outer-size) (- outer-height top-height))))
+    (.setBounds (:head container) 0 0 outer-width top-height)
+    (.setBounds (:body container) 0 top-height outer-width (- outer-height top-height))))
 
 (defn- layout-container
   [^Container parent inner-panel left right]
