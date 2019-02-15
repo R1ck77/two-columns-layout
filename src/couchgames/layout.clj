@@ -11,9 +11,17 @@
 (def right-head-key "right-head")
 (def right-body-key "right-body")
 
-(defn get-size [component]
+;;; TODO not optimal. Just pass the Size at this point :p
+(defn size-to-vector [size]
   (vec ((juxt #(.getWidth %)
-          #(.getHeight %)) (.getSize component))))
+              #(.getHeight %)) size)))
+
+(defn get-size [component]
+  (size-to-vector (.getSize component)))
+
+(defn get-preferred-size [component]
+  (size-to-vector (.getPreferredSize component)))
+
 
 (defn get-bounds [component]
   (vec ((juxt #(.getX %) #(.getY %)
