@@ -21,6 +21,9 @@
 (defn get-size [component]
   (dimension-to-vector (.getSize component)))
 
+(defn get-minimum-size [component]
+  (dimension-to-vector (.getMinimumSize component)))
+
 (defn get-preferred-size [component]
   (dimension-to-vector (.getPreferredSize component)))
 
@@ -47,10 +50,7 @@
     (size-components right)))
 
 (defn- preferred-layout-size [components]
-  (Dimension. 50 50))
-
-(defn- minimum-layout-size [components]
-  (Dimension. 0 0)) ;;; arbitrary, for now
+  (Dimension. 300 300))
 
 (defn- add-layout-component
   [components name component]
@@ -72,13 +72,27 @@
     (.addPropertyChangeListener split-pane listener)
     split-pane))
 
+(defn compute-combined-size [[head-width head-height] [body-width body-height]]
+  (vector (max head-width body-width)
+          (+ head-height body-height)))
+
+(defn set-minimum-size [comp [width height]]
+  (.setMinimumSize comp (Dimension. width height)))
+
+(defn set-preferred-size [comp [width height]]
+  (.setPreferredSize comp (Dimension. width height)))
+
 (defn create-side-panel [head body other-head]
-  {:head head
-   :body body
-   :other-head other-head
-   :panel (doto (JPanel. nil)
-            (.add head)
-            (.add body))})
+  (let [head-size  nil
+        body-size nil]
+    {:head head
+     :body body
+     :other-head other-head
+     :panel (doto (JPanel. nil)
+              (.add head)
+              (.add body)
+              (set-minimum-size (compute-combined-size (get-minimum-size head) (get-minimum-size body)))
+              (set-preferred-size (compute-combined-size (get-preferred-size head) (get-preferred-size body))))}))
 
 ;;; Pass all compontents immediately, for now, then You'll have to re-create the splitpane
 (defn create [^Container parent tmp-left-head tmp-left-body tmp-right-head tmp-right-body]
@@ -89,14 +103,17 @@
         left-panel (create-side-panel tmp-left-head tmp-left-body tmp-right-head)
         right-panel (create-side-panel tmp-right-head tmp-right-body tmp-left-head)
         inner-panel (create-split-pane parent left-panel right-panel)]
+    (println (dimension-to-vector (.getMinimumSize tmp-left-head)))
     (.add parent inner-panel)
     (reify LayoutManager
       (addLayoutComponent [this name component]
         (add-layout-component components name component))
       (minimumLayoutSize [this parent]
-        (minimum-layout-size components))
+        (println (dimension-to-vector (.getMinimumSize inner-panel)))
+        (.getMinimumSize inner-panel))
       (preferredLayoutSize [this parent]
-        (preferred-layout-size components))
+        (println (dimension-to-vector (.getPreferredSize inner-panel)))
+        (.getPreferredSize inner-panel))
       (removeLayoutComponent [this comp]
         (swap! components #(dissoc % comp)))
       (layoutContainer [this parent]
